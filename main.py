@@ -1,4 +1,5 @@
 import sys
+import random
 
 # ----- FUNCTIONS -------
 
@@ -53,7 +54,7 @@ def inWrongPlace(matrix, size):
             helper += 1
     return counter
 
-# ------ CODE ------
+
 def find_pos(matrix, size, nr):
     for row in range(size):
         for col in range(size):
@@ -71,6 +72,46 @@ def manhattan(matrix, size):
                 sum += abs(pos[0] - row) + abs(pos[1] - col)
     return sum
 
+
+def randomizeMatrix(matrix, N, M, pos):
+    myCounter = 0
+    while M > 0:
+        dir = random.randint(0, 4)
+        if pos[0] != 0:
+            if dir == 1:
+                pos = up(matrix, pos)
+                M -= 1
+                print("Direction: {}".format(dir))
+                myCounter += 1
+                print("Step: {}".format(myCounter))
+                printM(matrix)
+        if pos[1] != N - 1:
+            if dir == 2:
+                pos = right(matrix, pos)
+                M -= 1
+                print("Direction: {}".format(dir))
+                myCounter += 1
+                print("Step: {}".format(myCounter))
+                printM(matrix)
+        if pos[0] != N - 1:
+            if dir == 3:
+                pos = down(matrix, pos)
+                M -= 1
+                print("Direction: {}".format(dir))
+                myCounter += 1
+                print("Step: {}".format(myCounter))
+                printM(matrix)
+        if pos[1] != 0:
+            if dir == 4:
+                pos = left(matrix, pos)
+                M -= 1
+                print("Direction: {}".format(dir))
+                myCounter += 1
+                print("Step: {}".format(myCounter))
+                printM(matrix)
+    return matrix
+
+# ------ CODE ------
 
 input = False
 solseq = False
@@ -94,12 +135,17 @@ for ind in range(len(sys.argv)):
 
     if sys.argv[ind] == "-rand":
         randf = True
-        N = sys.argv[ind + 1]
-        M = sys.argv[ind + 2]
+        N = int(sys.argv[ind + 1])
+        M = int(sys.argv[ind + 2])
 
     if sys.argv[ind] == "-h":
-        H = sys.argv[ind + 1]
+        H = int(sys.argv[ind + 1])
 
-A = solved(3)
+
 pos = (0, 0)
 
+print()
+if randf:
+    A = randomizeMatrix(solved(N), N, M, pos)
+
+printM(A)
