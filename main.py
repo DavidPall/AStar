@@ -1,10 +1,6 @@
 import sys
 
-input = False
-solseq = False
-pcost = False
-nvisited = False
-randf = False
+# ------ FUNCTIONS -------
 
 def solved(n):
     A = []
@@ -47,9 +43,27 @@ def left(matrix, position):
     return position[0], position[1] - 1
 
 
+def inWrongPlace(matrix, size):
+    counter = 0
+    helper = 0
+    for i in range(size):
+        for j in range(size):
+            if matrix[i][j] != helper:
+                counter += 1
+            helper += 1
+    return counter
+
+# ------ CODE ------
+
+input = False
+solseq = False
+pcost = False
+nvisited = False
+randf = False
+
 for ind in range(len(sys.argv)):
     if sys.argv[ind] == "-input":
-        input_file = sys.argv[ind+1]
+        input_file = sys.argv[ind + 1]
         input = True
 
     if sys.argv[ind] == "-solseq":
@@ -63,12 +77,11 @@ for ind in range(len(sys.argv)):
 
     if sys.argv[ind] == "-rand":
         randf = True
-        N = sys.argv[ind+1]
-        M = sys.argv[ind+2]
+        N = sys.argv[ind + 1]
+        M = sys.argv[ind + 2]
 
     if sys.argv[ind] == "-h":
-        H = sys.argv[ind+1]
-
+        H = sys.argv[ind + 1]
 
 A = solved(3)
 pos = (0, 0)
