@@ -1,4 +1,5 @@
 import sys
+import random
 
 # ----- FUNCTIONS -------
 
@@ -72,6 +73,7 @@ def manhattan(matrix, size):
     return sum
 
 
+
 def inputFileMatrix(input_file):
     fin = open(input_file, "r")
     size = int(fin.readline())
@@ -96,6 +98,45 @@ def inputFileMatrix(input_file):
 #         for word in line:
 #             matrix[i].append(int(word))
 #     return matrix, size
+
+
+def randomizeMatrix(matrix, N, M, pos):
+    myCounter = 0
+    while M > 0:
+        dir = random.randint(0, 4)
+        if pos[0] != 0:
+            if dir == 1:
+                pos = up(matrix, pos)
+                M -= 1
+                print("Direction: {}".format(dir))
+                myCounter += 1
+                print("Step: {}".format(myCounter))
+                printM(matrix)
+        if pos[1] != N - 1:
+            if dir == 2:
+                pos = right(matrix, pos)
+                M -= 1
+                print("Direction: {}".format(dir))
+                myCounter += 1
+                print("Step: {}".format(myCounter))
+                printM(matrix)
+        if pos[0] != N - 1:
+            if dir == 3:
+                pos = down(matrix, pos)
+                M -= 1
+                print("Direction: {}".format(dir))
+                myCounter += 1
+                print("Step: {}".format(myCounter))
+                printM(matrix)
+        if pos[1] != 0:
+            if dir == 4:
+                pos = left(matrix, pos)
+                M -= 1
+                print("Direction: {}".format(dir))
+                myCounter += 1
+                print("Step: {}".format(myCounter))
+                printM(matrix)
+    return matrix
 
 
 # ------ CODE ------
@@ -134,3 +175,7 @@ if input:
     printM(matrix)
 
 
+if randf:
+    A = randomizeMatrix(solved(N), N, M, pos)
+
+printM(A)
