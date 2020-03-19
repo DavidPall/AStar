@@ -1,6 +1,6 @@
 import sys
 
-# ------ FUNCTIONS -------
+# ----- FUNCTIONS -------
 
 def solved(n):
     A = []
@@ -54,6 +54,23 @@ def inWrongPlace(matrix, size):
     return counter
 
 # ------ CODE ------
+def find_pos(matrix, size, nr):
+    for row in range(size):
+        for col in range(size):
+            if matrix[row][col] == nr:
+                return row, col
+
+
+def manhattan(matrix, size):
+    solved_mx = solved(size)
+    sum = 0
+    for row in range(size):
+        for col in range(size):
+            if matrix[row][col] != solved_mx[row][col]:
+                pos = find_pos(matrix, size, solved_mx[row][col])
+                sum += abs(pos[0] - row) + abs(pos[1] - col)
+    return sum
+
 
 input = False
 solseq = False
@@ -85,3 +102,4 @@ for ind in range(len(sys.argv)):
 
 A = solved(3)
 pos = (0, 0)
+
