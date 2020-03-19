@@ -1,5 +1,14 @@
 import sys
 import random
+from dataclasses import dataclass
+
+class Node:
+    matrix: []
+    size: int
+    pos: (int, int)
+    cost: int
+    cost_h: int
+    parent: Node
 
 # ----- FUNCTIONS -------
 
@@ -23,25 +32,25 @@ def printM(matrix):
 def up(matrix, position):
     matrix[position[0]][position[1]] = matrix[position[0] - 1][position[1]]
     matrix[position[0] - 1][position[1]] = 0
-    return position[0] - 1, position[1]
+    return matrix,(position[0] - 1, position[1])
 
 
 def down(matrix, position):
     matrix[position[0]][position[1]] = matrix[position[0] + 1][position[1]]
     matrix[position[0] + 1][position[1]] = 0
-    return position[0] + 1, position[1]
+    return matrix,(position[0] + 1, position[1])
 
 
 def right(matrix, position):
     matrix[position[0]][position[1]] = matrix[position[0]][position[1] + 1]
     matrix[position[0]][position[1] + 1] = 0
-    return position[0], position[1] + 1
+    return matrix,(position[0], position[1] + 1)
 
 
 def left(matrix, position):
     matrix[position[0]][position[1]] = matrix[position[0]][position[1] - 1]
     matrix[position[0]][position[1] - 1] = 0
-    return position[0], position[1] - 1
+    return matrix,(position[0], position[1] - 1)
 
 
 def inWrongPlace(matrix, size):
@@ -106,7 +115,7 @@ def randomizeMatrix(matrix, N, M, pos):
         dir = random.randint(0, 4)
         if pos[0] != 0:
             if dir == 1:
-                pos = up(matrix, pos)
+                (matrix,pos) = up(matrix, pos)
                 M -= 1
                 print("Direction: {}".format(dir))
                 myCounter += 1
@@ -114,7 +123,7 @@ def randomizeMatrix(matrix, N, M, pos):
                 printM(matrix)
         if pos[1] != N - 1:
             if dir == 2:
-                pos = right(matrix, pos)
+                (matrix,pos) = right(matrix, pos)
                 M -= 1
                 print("Direction: {}".format(dir))
                 myCounter += 1
@@ -122,7 +131,7 @@ def randomizeMatrix(matrix, N, M, pos):
                 printM(matrix)
         if pos[0] != N - 1:
             if dir == 3:
-                pos = down(matrix, pos)
+                (matrix,pos) = down(matrix, pos)
                 M -= 1
                 print("Direction: {}".format(dir))
                 myCounter += 1
@@ -130,13 +139,58 @@ def randomizeMatrix(matrix, N, M, pos):
                 printM(matrix)
         if pos[1] != 0:
             if dir == 4:
-                pos = left(matrix, pos)
+                (matrix,pos) = left(matrix, pos)
                 M -= 1
                 print("Direction: {}".format(dir))
                 myCounter += 1
                 print("Step: {}".format(myCounter))
                 printM(matrix)
     return matrix
+
+def is_solved(matrix, size, solved_mx):
+    for row in range(size):
+        for col in range(size):
+            if matrix[row][col] != solved_mx[row][col]:
+                return False
+    return True
+
+
+def printSolutionSequence(temp):
+    if temp.parent != None:
+        printSolutionSequence(temp.parent)
+    printM(temp.matrix)
+
+def A_Star(matrix, size, pos, func, solseq, pcost, nvisited):
+    Open = []
+    Closed = []
+    solved_mx = solved(size)
+    nude = Node(matrix, size, pos, 0, func(matrix, size), None)
+    visited = 1
+    Open.append(nude)
+    while len(Open) != 0:
+        temp = Open[0]
+        if is_solved(temp.matrix,size,solved_mx):
+            if solseq == True:
+                printSolutionSequence(temp)
+            if pcost == True:
+                print("cost: {}".format(temp.cost))
+            if nvisited == True:
+                print("nodes visited: {}".format(visited))
+            return True
+        for dir in range(4):
+            if dir == 0:
+                if pos[0] != 0:
+                    temp_tupple = up(temp.matrix, temp.pos)
+                    Open.append(Node(temp_tupple[0], size, temp_tupple[1], temp.cost + 1, temp.cost + 1 + manhattan(temp_tupple[0], size), temp))
+            if dir == 1:
+                if pos[1] != N - 1:
+                    temp_tupple = right(temp.matrix, temp.pos)
+            if dir == 2:
+                if pos[0] != N - 1:
+                    temp_tupple = down(temp.matrix, temp.pos)
+            if dir == 3:
+                if pos[1] != 0:
+                    temp_tupple = left(temp.matrix, temp.pos)
 
 
 # ------ CODE ------
@@ -175,7 +229,15 @@ if input:
     printM(matrix)
 
 
-if randf:
-    A = randomizeMatrix(solved(N), N, M, pos)
+elif randf:
+    matrix = randomizeMatrix(solved(N), N, M, (0,0))
+    size = N
+else:
+    matrix = solved(3)
+    size = 3
 
-printM(A)
+
+printM(matrix)
+pos = find_pos(matrix,size, 0)
+
+
