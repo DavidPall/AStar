@@ -53,7 +53,7 @@ def inWrongPlace(matrix, size):
             helper += 1
     return counter
 
-# ------ CODE ------
+
 def find_pos(matrix, size, nr):
     for row in range(size):
         for col in range(size):
@@ -72,7 +72,36 @@ def manhattan(matrix, size):
     return sum
 
 
+def inputFileMatrix(input_file):
+    fin = open(input_file, "r")
+    size = int(fin.readline())
+    matrix = []
+    for i in range(size):
+        line = fin.readline()
+        line = line.split(" ")
+        matrix.append([])
+        for word in line:
+            matrix[i].append(int(word))
+    return matrix, size
+
+# def stdInputMatrix():
+#     print("Enter Dö size of matrix:")
+#     size = input("Size:")
+#     matrix = []
+#     for i in range(size):
+#         print("Enter a line of the matrix:")
+#         line = input()
+#         line = line.split(" ")
+#         matrix.append([])
+#         for word in line:
+#             matrix[i].append(int(word))
+#     return matrix, size
+
+
+# ------ CODE ------
+
 input = False
+input_file = "default.txt"
 solseq = False
 pcost = False
 nvisited = False
@@ -94,12 +123,14 @@ for ind in range(len(sys.argv)):
 
     if sys.argv[ind] == "-rand":
         randf = True
-        N = sys.argv[ind + 1]
-        M = sys.argv[ind + 2]
+        N = int(sys.argv[ind + 1])
+        M = int(sys.argv[ind + 2])
 
     if sys.argv[ind] == "-h":
-        H = sys.argv[ind + 1]
+        H = int(sys.argv[ind + 1])
 
-A = solved(3)
-pos = (0, 0)
+if input:
+    (matrix, size) = inputFileMatrix(input_file)
+    printM(matrix)
+
 
