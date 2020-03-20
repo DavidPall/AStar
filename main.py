@@ -13,6 +13,7 @@ class Node:
 
 # ----- FUNCTIONS -------
 
+# Letrehozza a megoldott kirakosnak megfelelo allapotot
 def solved(n):
     A = []
     count = 0
@@ -24,13 +25,13 @@ def solved(n):
         # print(A[i])
     return A
 
-
+# Kiirja a matrixot
 def printM(matrix):
     print()
     for row in matrix:
         print(row)
 
-
+#Felfele tolja az ures mezot
 def up(matrix, position):
     new_matrix = []
     for i in range(len(matrix)):
@@ -39,7 +40,7 @@ def up(matrix, position):
     new_matrix[position[0] - 1][position[1]] = 0
     return new_matrix,(position[0] - 1, position[1])
 
-
+# Lefele tolja az ures mezot
 def down(matrix, position):
     new_matrix = []
     for i in range(len(matrix)):
@@ -48,7 +49,7 @@ def down(matrix, position):
     new_matrix[position[0] + 1][position[1]] = 0
     return new_matrix,(position[0] + 1, position[1])
 
-
+# Jobbra tolja az ures mezot
 def right(matrix, position):
     new_matrix = []
     for i in range(len(matrix)):
@@ -57,7 +58,7 @@ def right(matrix, position):
     new_matrix[position[0]][position[1] + 1] = 0
     return new_matrix,(position[0], position[1] + 1)
 
-
+# Balra tolja az ures mezot
 def left(matrix, position):
     new_matrix = []
     for i in range(len(matrix)):
@@ -66,7 +67,7 @@ def left(matrix, position):
     new_matrix[position[0]][position[1] - 1] = 0
     return new_matrix,(position[0], position[1] - 1)
 
-
+# 1. Szamu heurisztika. Megszamlalja azon mezok szamat amelyek nincsenek jo helyen.
 def inWrongPlace(matrix, size):
     counter = 0
     helper = 0
@@ -77,14 +78,14 @@ def inWrongPlace(matrix, size):
             helper += 1
     return counter
 
-
+# Megtalalja az ures mezo poziciojat.
 def find_pos(matrix, size, nr):
     for row in range(size):
         for col in range(size):
             if matrix[row][col] == nr:
                 return row, col
 
-
+# 2. Szamu heurisztika. Kiszamitja a mezok manhattan tavolsagat a helyuktol.
 def manhattan(matrix, size):
     solved_mx = solved(size)
     sum = 0
@@ -96,7 +97,7 @@ def manhattan(matrix, size):
     return sum
 
 
-
+# File-bol beolvasott allapot
 def inputFileMatrix(input_file):
     fin = open(input_file, "r")
     size = int(fin.readline())
@@ -122,7 +123,7 @@ def inputFileMatrix(input_file):
 #             matrix[i].append(int(word))
 #     return matrix, size
 
-
+# Veletlen generalt allapot
 def randomizeMatrix(matrix, N, M, pos):
     myCounter = 0
     while M > 0:
@@ -147,6 +148,7 @@ def randomizeMatrix(matrix, N, M, pos):
     printM(matrix)
     return matrix
 
+# Allapot osszehasonlitas
 def compare(matrix1, size, matrix2):
     for row in range(size):
         for col in range(size):
@@ -154,17 +156,19 @@ def compare(matrix1, size, matrix2):
                 return False
     return True
 
-
+# Megoldasi szekvencia kiirasa
 def printSolutionSequence(temp):
     if temp.parent != None:
         printSolutionSequence(temp.parent)
     printM(temp.matrix)
 
 
+# Segedfuggveny, kiemeli a csomopontok heurisztikus arat
 def takeCostH(e):
     return e.cost_h
 
 
+# A*
 def A_Star(matrix, size, pos, func, solseq, pcost, nvisited):
     Open = []
     Closed = []
@@ -172,7 +176,7 @@ def A_Star(matrix, size, pos, func, solseq, pcost, nvisited):
     nude = Node(matrix, size, pos, 0, func(matrix, size), None)
     visited = 1
     Open.append(nude)
-    while len(Open) != 0 :
+    while len(Open) != 0:
         temp = Open[0]
         # printM(temp.matrix)
         if compare(temp.matrix,size,solved_mx):
