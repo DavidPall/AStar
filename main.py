@@ -26,32 +26,45 @@ def solved(n):
 
 
 def printM(matrix):
+    print()
     for row in matrix:
         print(row)
 
 
 def up(matrix, position):
-    matrix[position[0]][position[1]] = matrix[position[0] - 1][position[1]]
-    matrix[position[0] - 1][position[1]] = 0
-    return matrix,(position[0] - 1, position[1])
+    new_matrix = []
+    for i in range(len(matrix)):
+        new_matrix.append(matrix[i].copy())
+    new_matrix[position[0]][position[1]] = new_matrix[position[0] - 1][position[1]]
+    new_matrix[position[0] - 1][position[1]] = 0
+    return new_matrix,(position[0] - 1, position[1])
 
 
 def down(matrix, position):
-    matrix[position[0]][position[1]] = matrix[position[0] + 1][position[1]]
-    matrix[position[0] + 1][position[1]] = 0
-    return matrix,(position[0] + 1, position[1])
+    new_matrix = []
+    for i in range(len(matrix)):
+        new_matrix.append(matrix[i].copy())
+    new_matrix[position[0]][position[1]] = new_matrix[position[0] + 1][position[1]]
+    new_matrix[position[0] + 1][position[1]] = 0
+    return new_matrix,(position[0] + 1, position[1])
 
 
 def right(matrix, position):
-    matrix[position[0]][position[1]] = matrix[position[0]][position[1] + 1]
-    matrix[position[0]][position[1] + 1] = 0
-    return matrix,(position[0], position[1] + 1)
+    new_matrix = []
+    for i in range(len(matrix)):
+        new_matrix.append(matrix[i].copy())
+    new_matrix[position[0]][position[1]] = new_matrix[position[0]][position[1] + 1]
+    new_matrix[position[0]][position[1] + 1] = 0
+    return new_matrix,(position[0], position[1] + 1)
 
 
 def left(matrix, position):
-    matrix[position[0]][position[1]] = matrix[position[0]][position[1] - 1]
-    matrix[position[0]][position[1] - 1] = 0
-    return matrix,(position[0], position[1] - 1)
+    new_matrix = []
+    for i in range(len(matrix)):
+        new_matrix.append(matrix[i].copy())
+    new_matrix[position[0]][position[1]] = new_matrix[position[0]][position[1] - 1]
+    new_matrix[position[0]][position[1] - 1] = 0
+    return new_matrix,(position[0], position[1] - 1)
 
 
 def inWrongPlace(matrix, size):
@@ -118,34 +131,20 @@ def randomizeMatrix(matrix, N, M, pos):
             if dir == 1:
                 (matrix,pos) = up(matrix, pos)
                 M -= 1
-                print("Direction: {}".format(dir))
-                myCounter += 1
-                print("Step: {}".format(myCounter))
-                printM(matrix)
         if pos[1] != N - 1:
             if dir == 2:
                 (matrix,pos) = right(matrix, pos)
                 M -= 1
-                print("Direction: {}".format(dir))
-                myCounter += 1
-                print("Step: {}".format(myCounter))
-                printM(matrix)
         if pos[0] != N - 1:
             if dir == 3:
                 (matrix,pos) = down(matrix, pos)
                 M -= 1
-                print("Direction: {}".format(dir))
-                myCounter += 1
-                print("Step: {}".format(myCounter))
-                printM(matrix)
         if pos[1] != 0:
             if dir == 4:
                 (matrix,pos) = left(matrix, pos)
                 M -= 1
-                print("Direction: {}".format(dir))
-                myCounter += 1
-                print("Step: {}".format(myCounter))
-                printM(matrix)
+    print("Random Matrix:")
+    printM(matrix)
     return matrix
 
 def compare(matrix1, size, matrix2):
@@ -163,7 +162,7 @@ def printSolutionSequence(temp):
 
 
 def takeCostH(e):
-    return e[4]
+    return e.cost_h
 
 
 def A_Star(matrix, size, pos, func, solseq, pcost, nvisited):
@@ -173,8 +172,9 @@ def A_Star(matrix, size, pos, func, solseq, pcost, nvisited):
     nude = Node(matrix, size, pos, 0, func(matrix, size), None)
     visited = 1
     Open.append(nude)
-    while len(Open) != 0:
+    while len(Open) != 0 :
         temp = Open[0]
+        # printM(temp.matrix)
         if compare(temp.matrix,size,solved_mx):
             if solseq == True:
                 printSolutionSequence(temp)
@@ -188,63 +188,62 @@ def A_Star(matrix, size, pos, func, solseq, pcost, nvisited):
         for dir in range(4):
             kid = None
             if dir == 0:
-                if pos[0] != 0:
+                if temp.pos[0] != 0:
                     temp_tupple = up(temp.matrix, temp.pos)
-                    print("up")
-                    printM(temp_tupple[0])
+                    # print("up")
+                    # printM(temp_tupple[0])
                     kid = Node(temp_tupple[0], size, temp_tupple[1], temp.cost + 1,
                                      temp.cost + 1 + func(temp_tupple[0], size), temp)
                 else:
                     continue
             if dir == 1:
-                if pos[1] != size - 1:
+                if temp.pos[1] != size - 1:
                     temp_tupple = right(temp.matrix, temp.pos)
-                    print("right")
-                    printM(temp_tupple[0])
+                    # print("right")
+                    # printM(temp_tupple[0])
                     kid = Node(temp_tupple[0], size, temp_tupple[1], temp.cost + 1,
                                temp.cost + 1 + func(temp_tupple[0], size), temp)
                 else:
                     continue
             if dir == 2:
-                if pos[0] != size - 1:
+                if temp.pos[0] != size - 1:
                     temp_tupple = down(temp.matrix, temp.pos)
-                    print("down")
-                    printM(temp_tupple[0])
+                    # print("down")
+                    # printM(temp_tupple[0])
                     kid = Node(temp_tupple[0], size, temp_tupple[1], temp.cost + 1,
                                temp.cost + 1 + func(temp_tupple[0], size), temp)
                 else:
                     continue
             if dir == 3:
-                if pos[1] != 0:
+                if temp.pos[1] != 0:
                     temp_tupple = left(temp.matrix, temp.pos)
-                    print("left")
-                    printM(temp_tupple[0])
+                    # print("left")
+                    # printM(temp_tupple[0])
                     kid = Node(temp_tupple[0], size, temp_tupple[1], temp.cost + 1,
                                temp.cost + 1 + func(temp_tupple[0], size), temp)
                 else:
                     continue
             visited += 1
-            print(visited)
             duplicant = False
             for nd in Open:
                 if compare(nd.matrix, size, kid.matrix) :
                     if nd.cost > kid.cost:
                        Open.remove(nd)
-                       print("remove_open")
+                       # print("remove_open")
                     else:
                         duplicant = True
             for nd in Closed:
                 if compare(nd.matrix, size, kid.matrix):
                     if nd.cost > kid.cost:
                         Closed.remove(nd)
-                        print("remove_closed")
+                        # print("remove_closed")
                     else:
                         duplicant = True
             if duplicant == False:
                 Open.append(kid)
-                print("append")
+                # print("append")
                 Open.sort(key=takeCostH)
-                print("sort_open")
+                # print("sort_open")
 
 
 
@@ -288,8 +287,11 @@ else:
     matrix = solved(3)
     size = 3
 
+
+
 printM(matrix)
 pos = find_pos(matrix,size, 0)
+
 
 if H == 1:
     A_Star(matrix, size, pos, inWrongPlace, solseq, pcost, nVisited)
