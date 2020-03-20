@@ -18,4 +18,4 @@
 - Az üress mezőnek a 0-os érték felel meg
 
 
-### Példahívás a programra: "python main.py -rand 3 199 -h 1 -solseq -pcost -nvisited"
+### Példahívás a programra: "python main.py -input put_in.txt -h 1 -solseq -pcost -nvisited"
