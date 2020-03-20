@@ -3,12 +3,13 @@ import random
 from dataclasses import dataclass
 
 class Node:
-    matrix: []
-    size: int
-    pos: (int, int)
-    cost: int
-    cost_h: int
-    parent: Node
+    def __init__(self, matrix, size, pos, cost, cost_h, parent):
+        self.matrix = matrix
+        self.size = size
+        self.pos = pos
+        self.cost = cost
+        self.cost_h = cost_h
+        self.parent = parent
 
 # ----- FUNCTIONS -------
 
@@ -147,10 +148,10 @@ def randomizeMatrix(matrix, N, M, pos):
                 printM(matrix)
     return matrix
 
-def is_solved(matrix, size, solved_mx):
+def compare(matrix1, size, matrix2):
     for row in range(size):
         for col in range(size):
-            if matrix[row][col] != solved_mx[row][col]:
+            if matrix1[row][col] != matrix2[row][col]:
                 return False
     return True
 
@@ -159,6 +160,11 @@ def printSolutionSequence(temp):
     if temp.parent != None:
         printSolutionSequence(temp.parent)
     printM(temp.matrix)
+
+
+def takeCostH(e):
+    return e[4]
+
 
 def A_Star(matrix, size, pos, func, solseq, pcost, nvisited):
     Open = []
@@ -169,7 +175,7 @@ def A_Star(matrix, size, pos, func, solseq, pcost, nvisited):
     Open.append(nude)
     while len(Open) != 0:
         temp = Open[0]
-        if is_solved(temp.matrix,size,solved_mx):
+        if compare(temp.matrix,size,solved_mx):
             if solseq == True:
                 printSolutionSequence(temp)
             if pcost == True:
@@ -177,20 +183,69 @@ def A_Star(matrix, size, pos, func, solseq, pcost, nvisited):
             if nvisited == True:
                 print("nodes visited: {}".format(visited))
             return True
+        Closed.append(temp)
+        Open.remove(temp)
         for dir in range(4):
+            kid = None
             if dir == 0:
                 if pos[0] != 0:
                     temp_tupple = up(temp.matrix, temp.pos)
-                    Open.append(Node(temp_tupple[0], size, temp_tupple[1], temp.cost + 1, temp.cost + 1 + manhattan(temp_tupple[0], size), temp))
+                    print("up")
+                    printM(temp_tupple[0])
+                    kid = Node(temp_tupple[0], size, temp_tupple[1], temp.cost + 1,
+                                     temp.cost + 1 + func(temp_tupple[0], size), temp)
+                else:
+                    continue
             if dir == 1:
-                if pos[1] != N - 1:
+                if pos[1] != size - 1:
                     temp_tupple = right(temp.matrix, temp.pos)
+                    print("right")
+                    printM(temp_tupple[0])
+                    kid = Node(temp_tupple[0], size, temp_tupple[1], temp.cost + 1,
+                               temp.cost + 1 + func(temp_tupple[0], size), temp)
+                else:
+                    continue
             if dir == 2:
-                if pos[0] != N - 1:
+                if pos[0] != size - 1:
                     temp_tupple = down(temp.matrix, temp.pos)
+                    print("down")
+                    printM(temp_tupple[0])
+                    kid = Node(temp_tupple[0], size, temp_tupple[1], temp.cost + 1,
+                               temp.cost + 1 + func(temp_tupple[0], size), temp)
+                else:
+                    continue
             if dir == 3:
                 if pos[1] != 0:
                     temp_tupple = left(temp.matrix, temp.pos)
+                    print("left")
+                    printM(temp_tupple[0])
+                    kid = Node(temp_tupple[0], size, temp_tupple[1], temp.cost + 1,
+                               temp.cost + 1 + func(temp_tupple[0], size), temp)
+                else:
+                    continue
+            visited += 1
+            print(visited)
+            duplicant = False
+            for nd in Open:
+                if compare(nd.matrix, size, kid.matrix) :
+                    if nd.cost > kid.cost:
+                       Open.remove(nd)
+                       print("remove_open")
+                    else:
+                        duplicant = True
+            for nd in Closed:
+                if compare(nd.matrix, size, kid.matrix):
+                    if nd.cost > kid.cost:
+                        Closed.remove(nd)
+                        print("remove_closed")
+                    else:
+                        duplicant = True
+            if duplicant == False:
+                Open.append(kid)
+                print("append")
+                Open.sort(key=takeCostH)
+                print("sort_open")
+
 
 
 # ------ CODE ------
@@ -199,7 +254,7 @@ input = False
 input_file = "default.txt"
 solseq = False
 pcost = False
-nvisited = False
+nVisited = False
 randf = False
 
 for ind in range(len(sys.argv)):
@@ -214,7 +269,7 @@ for ind in range(len(sys.argv)):
         pcost = True
 
     if sys.argv[ind] == "-nvisited":
-        nvisited = True
+        nVisited = True
 
     if sys.argv[ind] == "-rand":
         randf = True
@@ -226,9 +281,6 @@ for ind in range(len(sys.argv)):
 
 if input:
     (matrix, size) = inputFileMatrix(input_file)
-    printM(matrix)
-
-
 elif randf:
     matrix = randomizeMatrix(solved(N), N, M, (0,0))
     size = N
@@ -236,8 +288,16 @@ else:
     matrix = solved(3)
     size = 3
 
-
 printM(matrix)
 pos = find_pos(matrix,size, 0)
+
+if H == 1:
+    A_Star(matrix, size, pos, inWrongPlace, solseq, pcost, nVisited)
+elif H == 2:
+    A_Star(matrix, size, pos, manhattan, solseq, pcost, nVisited)
+else:
+    print("Wrong Function call. Try adding -h 1")
+
+
 
 
